@@ -1,7 +1,8 @@
+import {arrow_up_right, arrow_down_right} from "./icons.js";
 
 var how_much = {
     sections: 2,
-    figure_steps: 3
+    figure_steps: 6
 };
 
 var timings = {
@@ -30,7 +31,7 @@ var all_steps_and_jumps_number;
 
 var interval; // for function
 
-add_burpee = function(up_or_down, section, burpee, delay) {
+var add_burpee = function(up_or_down, section, burpee, delay) {
     let new_object = {
         number: all_steps_and_jumps_counter,
         up_or_down: up_or_down,
@@ -43,7 +44,7 @@ add_burpee = function(up_or_down, section, burpee, delay) {
     all_steps_and_jumps_counter++;
 };
 
-add_step = function(up_or_down, section, figure, step, delay) {
+var add_step = function(up_or_down, section, figure, step, delay) {
     let new_object = {
         number: all_steps_and_jumps_counter,
         up_or_down: up_or_down,
@@ -57,7 +58,7 @@ add_step = function(up_or_down, section, figure, step, delay) {
     all_steps_and_jumps_counter++;
 };
 
-figures_and_burpees = function(section, up_or_down) {
+var figures_and_burpees = function(section, up_or_down) {
     // walking pattern
     for (let k = 1; k <= section; k++) {
         for (let l = 1; l <=how_much.figure_steps; l++) {
@@ -82,7 +83,7 @@ figures_and_burpees = function(section, up_or_down) {
     }
 };
 
-calculate_all = function () {
+var calculate_all = function () {
     let up_or_down = "up";
     for (let k = 1; k <= how_much.sections; k++) {
         figures_and_burpees(k, up_or_down);
@@ -95,7 +96,7 @@ calculate_all = function () {
     all_steps_and_jumps_number = all_steps_and_jumps_counter;
 };
 
-check_for_next = function() {
+var check_for_next = function() {
     let timestamp =   new Date().getTime();
     if (all_steps_and_jumps_counter === 0) {
         // first step, execute immediately
@@ -117,12 +118,16 @@ check_for_next = function() {
   }
 };
 
-do_all = function() {
+export var do_all = function() {
     all_steps_and_jumps_counter = 0;
     interval = setInterval(check_for_next, 100);
 };
 
-update_DOM = function (current) {
+var abort = function() {
+    clearInterval(interval);
+};
+
+var update_DOM = function (current) {
     let data = all_steps_and_jumps[current];
     if (data.step_or_burpee === "step") {
         let main = document.getElementById("step_burpee");
@@ -134,11 +139,16 @@ update_DOM = function (current) {
         main.style.color = "red";
     }
     let uod = document.getElementById("up_down");
-    uod.textContent = data.up_or_down;
+    if (data.up_or_down === "up") {
+        uod.innerHTML = arrow_up_right + " " + data.up_or_down + " " + arrow_up_right;
+    } else if (data.up_or_down === "down") {
+        uod.innerHTML = arrow_down_right + " " + data.up_or_down + " " + arrow_down_right;
+    }
+
     let section = document.getElementById("section");
     section.textContent = data.section;
 };
 
 calculate_all();
 //console.log(all_steps_and_jumps);
-do_all();
+//do_all();
