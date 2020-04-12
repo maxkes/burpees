@@ -1,25 +1,7 @@
-import {arrow_up_right, arrow_down_right} from "./icons.js";
+import {arrow_up_right, arrow_down_right} from "./includes/icons.js";
+import {how_much, timings} from "./includes/variables.js";
 
-var how_much = {
-    sections: 2,
-    figure_steps: 6
-};
-
-var timings = {
-    // the "delay after" includes also the time for the action (jumping, walking)
-    // all in ms
-
-    // after every step
-    delay_step: 1000,
-    // extra time after all steps, before the jumps
-    delay_walk_pattern: 2000,
-    // after every jump
-    delay_jump: 1500,
-    // extra time after the jumps, before the next walking pattern
-    delay_jumps: 2000
-
-    // global timing factor, can be used to
-};
+export {how_much} from "./includes/variables.js";
 
 var timer = {
     timestamp_last: 0
@@ -59,8 +41,9 @@ var add_step = function(up_or_down, section, figure, step, delay) {
 };
 
 var figures_and_burpees = function(section, up_or_down) {
-    // walking pattern
+    // sections
     for (let k = 1; k <= section; k++) {
+        // walking patterns
         for (let l = 1; l <=how_much.figure_steps; l++) {
             let delay = 0;
             if (l === how_much.figure_steps) {
@@ -83,12 +66,13 @@ var figures_and_burpees = function(section, up_or_down) {
     }
 };
 
-var calculate_all = function () {
+export var calculate_all = function () {
+    all_steps_and_jumps = [];
+    all_steps_and_jumps_counter = 0;
     let up_or_down = "up";
     for (let k = 1; k <= how_much.sections; k++) {
         figures_and_burpees(k, up_or_down);
     }
-    console.log("Richtungswechsel");
     up_or_down = "down";
     for (let k = how_much.sections-1; k > 0; k--) {
         figures_and_burpees(k, up_or_down);
@@ -102,16 +86,17 @@ var check_for_next = function() {
         // first step, execute immediately
         console.log(all_steps_and_jumps[all_steps_and_jumps_counter]);
         timer.timestamp_last = timestamp;
-        update_DOM(all_steps_and_jumps_counter);
+        update_timer_DOM(all_steps_and_jumps_counter);
         all_steps_and_jumps_counter++;
     }else {
         if (timestamp > all_steps_and_jumps[all_steps_and_jumps_counter - 1].delay + timer.timestamp_last) {
             console.log(all_steps_and_jumps[all_steps_and_jumps_counter]);
             timer.timestamp_last = timestamp;
-            update_DOM(all_steps_and_jumps_counter);
+            update_timer_DOM(all_steps_and_jumps_counter);
             all_steps_and_jumps_counter++;
         }
     }
+
 
   if (all_steps_and_jumps_counter === all_steps_and_jumps_number - 1) {
       clearInterval(interval);
@@ -123,11 +108,11 @@ export var do_all = function() {
     interval = setInterval(check_for_next, 100);
 };
 
-var abort = function() {
+export var abort_all = function() {
     clearInterval(interval);
 };
 
-var update_DOM = function (current) {
+let update_timer_DOM = function (current) {
     let data = all_steps_and_jumps[current];
     if (data.step_or_burpee === "step") {
         let main = document.getElementById("step_burpee");
@@ -149,6 +134,17 @@ var update_DOM = function (current) {
     section.textContent = data.section;
 };
 
-calculate_all();
-//console.log(all_steps_and_jumps);
-//do_all();
+export var print_current_settings = function () {
+    let list = document.getElementById("list_of_settings");
+    list.innerHTML = "";
+    let li1 = document.createElement("li");
+    li1.appendChild(document.createTextNode('Burpees bis: ' + how_much.sections));
+    list.appendChild(li1);
+    let li2 = document.createElement("li");
+    li2.appendChild(document.createTextNode('Zeit pro Schritt: ' + (timings.delay_step/1000).toFixed(2) + ' s'));
+    list.appendChild(li2);
+    let li3 = document.createElement("li");
+    li3.appendChild(document.createTextNode('Zeit pro Burpee: ' + (timings.delay_jumps/1000).toFixed(2) + ' s'));
+    list.appendChild(li3);
+
+};

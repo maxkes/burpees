@@ -34,9 +34,9 @@
     </div>
 
     <div class="container">
-        <button class="btn btn-success" id="bnt-start">Start</button>
+        <button class="btn btn-success" id="btn-start">Start</button>
         <button class="btn btn-warning" disabled>Pause</button>
-        <button class="btn btn-danger">Reset</button>
+        <button class="btn btn-danger" id="btn-abort">Abbruch</button>
     </div>
 
 </div>
@@ -45,6 +45,17 @@
 
 <div class="container bg-light h-100">
     <h2 id="settings">Einstellungen</h2>
+    <h4>Aktuelle Einstellungen</h4>
+    <ul id="list_of_settings">
+
+    </ul>
+    <form>
+        <div class="form-group">
+            <label for="sections">Pyramide bis zu</label>
+            <input name="sections" id="sections"class="form-control" type="number" placeholder="11">
+        </div>
+        <button type="button" class="btn btn-primary" id="btn-change-settings">Einstellungen ändern</button>
+    </form>
 </div>
 
 <div class="container">
@@ -58,9 +69,23 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 
 <script type="module">
-    import {do_all} from './js-functions/functions.js';
-    document.getElementById("bnt-start").addEventListener('click', do_all);
+    import {do_all, abort_all, print_current_settings, calculate_all} from './js-functions/functions.js';
+    import {how_much} from './js-functions/functions.js';
+    print_current_settings();
+    calculate_all();
+
+    let update_settings = function() {
+        let settings = $(":input").serializeArray();
+        // todo check if not empty and > 2
+        how_much.sections = settings[0].value;
+        print_current_settings();
+        calculate_all();
+    };
+
+    document.getElementById("btn-start").addEventListener('click', do_all);
+    document.getElementById("btn-abort").addEventListener('click', abort_all);
+    document.getElementById("btn-change-settings").addEventListener('click', update_settings);
+
 </script>
 </body>
-</html>
 </html>
