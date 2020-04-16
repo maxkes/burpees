@@ -45,46 +45,50 @@
 
 <div class="container bg-light h-100">
     <h2 id="settings">Einstellungen</h2>
-    <h4>Aktuelle Einstellungen</h4>
-    <ul id="list_of_settings">
-
-    </ul>
-    <form>
+    <div id="app-settings">
         <div class="form-group">
-            <label for="sections">Pyramide bis zu</label>
-            <input name="sections" id="sections"class="form-control" type="number" placeholder="11">
+            <label for="sections">Wir machen Burpees bis </label>
+            <input class="form-control" type="number" id="sections" v-model.number="sections">
         </div>
-        <button type="button" class="btn btn-primary" id="btn-change-settings">Einstellungen ändern</button>
-    </form>
+        <div class="form-group">
+            <label for="steps_figure">Schritte pro Figur</label>
+            <input class="form-control" type="number" id="steps_figure" v-model.number="figure_steps">
+        </div>
+        <div class="form-group">
+            <label for="step_delay">Millisekunden pro Schritt</label>
+            <input class="form-control" type="number" id="step_delay" v-model.number="delay_step">
+        </div>
+        <div class="form-group">
+            <label for="delay_jump">Millisekunden pro Burpee</label>
+            <input class="form-control" type="number" id="delay_jump" v-model.number="delay_jump">
+        </div>
+    </div>
+
 </div>
 
-<div class="container">
-
-</div>
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script src="js-functions/vue.js"></script>
+<script src="js-functions/functions.js"></script>
 
-<script type="module">
-    import {do_all, abort_all, print_current_settings, calculate_all} from './js-functions/functions.js';
-    import {how_much} from './js-functions/functions.js';
-    print_current_settings();
-    calculate_all();
+<script>
 
-    let update_settings = function() {
-        let settings = $(":input").serializeArray();
-        // todo check if not empty and > 2
-        how_much.sections = settings[0].value;
-        print_current_settings();
-        calculate_all();
-    };
+
+    var app_settings = new Vue({
+        el: "#app-settings",
+        data: settings
+    })
+
+
+    //calculate_all();
 
     document.getElementById("btn-start").addEventListener('click', do_all);
     document.getElementById("btn-abort").addEventListener('click', abort_all);
-    document.getElementById("btn-change-settings").addEventListener('click', update_settings);
+
 
 </script>
 </body>
