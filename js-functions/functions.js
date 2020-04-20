@@ -35,7 +35,8 @@ var storage = {
     // intern data
     all_steps_and_jumps: [],
     all_steps_and_jumps_counter: 1,
-    all_steps_and_jumps_number: 0
+    all_steps_and_jumps_number: 0,
+    running: false
 };
 
 var interval; // for function
@@ -108,6 +109,7 @@ var calculate_all = function () {
 };
 
 var check_for_next = function() {
+    if (!storage.running) return;
     let timestamp =   new Date().getTime();
     if (storage.all_steps_and_jumps_counter === 0) {
         // first step, execute immediately
@@ -126,6 +128,7 @@ var check_for_next = function() {
 
 
   if (storage.all_steps_and_jumps_counter === storage.all_steps_and_jumps_number - 1) {
+      storage.running = false;
       clearInterval(interval);
   }
 };
@@ -133,10 +136,12 @@ var check_for_next = function() {
 var do_all = function () {
     calculate_all();
     storage.all_steps_and_jumps_counter = 0;
+    storage.running = true;
     interval = setInterval(check_for_next, 100);
 };
 
 var abort_all = function () {
+    storage.running = false;
     clearInterval(interval);
 };
 

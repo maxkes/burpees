@@ -33,15 +33,16 @@
                 <p id="up_down">0</p>
                 <p id="section">0</p>
             </div>
-            <div class="container text-center">
-                <button class="btn btn-success" id="btn-start">Start</button>
-                <button class="btn btn-warning" disabled>Pause</button>
+            <div class="container text-center" id="app-control">
+                <button class="btn btn-success" id="btn-start"><span v-if="running">Re-</span>Start</button>
+                <button v-on:click="pause" class="btn btn-warning" >Pause</button>
                 <button class="btn btn-danger" id="btn-abort">Abbruch</button>
             </div>
         </div>
         <div class="col-sm-4" id="app-current">
-            <div id=app-current">
-                <p>Aktuell ist dran (noch falsch):</p><p>{{sections}}</p>
+            <div >v-if="running"
+                <h3>Aktuell ist dran:</h3>
+                <p>Sektion: <span>{{all_steps_and_jumps[all_steps_and_jumps_counter]}}</span></p>
             </div>
 
             <p></p>
@@ -92,6 +93,17 @@
         el: "#app-current",
         data: storage
     })
+
+    var app_control = new Vue({
+        el: "#app-control",
+        data: storage,
+        methods: {
+            pause: function (event) {
+                this.running = !this.running; // todo Restart-logik ändern
+            }
+        }
+    })
+
 
     document.getElementById("btn-start").addEventListener('click', do_all);
     document.getElementById("btn-abort").addEventListener('click', abort_all);
