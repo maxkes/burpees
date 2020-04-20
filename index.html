@@ -41,8 +41,7 @@
         </div>
         <div class="col-sm-4" id="app-current">
             <div id=app-current">
-                <p>Aktuell ist dran:</p>
-                <p>{{sections}}</p>
+                <p>Aktuell ist dran (noch falsch):</p><p>{{sections}}</p>
             </div>
 
             <p></p>
@@ -86,12 +85,12 @@
 
     var app_settings = new Vue({
         el: "#app-settings",
-        data: settings
+        data: storage
     })
 
     var app_current = new Vue({
         el: "#app-current",
-        data: settings
+        data: storage
     })
 
     document.getElementById("btn-start").addEventListener('click', do_all);

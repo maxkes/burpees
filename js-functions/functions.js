@@ -17,7 +17,7 @@ var timer = {
     timestamp_last: 0
 };
 
-var settings = {
+var storage = {
     sections: 2,
     figure_steps: 6,
 
@@ -30,31 +30,32 @@ var settings = {
     // after every jump
     delay_jump: 1000,
     // extra time after the jumps, before the next walking pattern
-    delay_jumps: 1000
-};
+    delay_jumps: 1000,
 
-var all_steps_and_jumps = [];
-var all_steps_and_jumps_counter = 1;
-var all_steps_and_jumps_number;
+    // intern data
+    all_steps_and_jumps: [],
+    all_steps_and_jumps_counter: 1,
+    all_steps_and_jumps_number: 0
+};
 
 var interval; // for function
 
 var add_burpee = function(up_or_down, section, burpee, delay) {
     let new_object = {
-        number: all_steps_and_jumps_counter,
+        number: storage.all_steps_and_jumps_counter,
         up_or_down: up_or_down,
         section: section,
         step_or_burpee: "burpee",
         burpee: burpee,
         delay: delay
     };
-    all_steps_and_jumps.push(new_object);
-    all_steps_and_jumps_counter++;
+    storage.all_steps_and_jumps.push(new_object);
+    storage.all_steps_and_jumps_counter++;
 };
 
 var add_step = function(up_or_down, section, figure, step, delay) {
     let new_object = {
-        number: all_steps_and_jumps_counter,
+        number: storage.all_steps_and_jumps_counter,
         up_or_down: up_or_down,
         section: section,
         step_or_burpee: "step",
@@ -62,20 +63,20 @@ var add_step = function(up_or_down, section, figure, step, delay) {
         step:step,
         delay: delay
     };
-    all_steps_and_jumps.push(new_object);
-    all_steps_and_jumps_counter++;
+    storage.all_steps_and_jumps.push(new_object);
+    storage.all_steps_and_jumps_counter++;
 };
 
 var figures_and_burpees = function(section, up_or_down) {
     // sections
     for (let k = 1; k <= section; k++) {
         // walking patterns
-        for (let l = 1; l <= settings.figure_steps; l++) {
+        for (let l = 1; l <= storage.figure_steps; l++) {
             let delay = 0;
-            if (l === settings.figure_steps) {
-                delay = settings.delay_step + settings.delay_walk_pattern;
+            if (l === storage.figure_steps) {
+                delay = storage.delay_step + storage.delay_walk_pattern;
             } else {
-                delay = settings.delay_step;
+                delay = storage.delay_step;
             }
             add_step(up_or_down, section, k, l, delay);
         }
@@ -84,54 +85,54 @@ var figures_and_burpees = function(section, up_or_down) {
     for (let k = 1; k <= section; k++) {
         let delay = 0;
         if (k === section) {
-            delay = settings.delay_jump + settings.delay_jumps;
+            delay = storage.delay_jump + storage.delay_jumps;
         } else {
-            delay = settings.delay_jump;
+            delay = storage.delay_jump;
         }
         add_burpee(up_or_down, section, k, delay);
     }
 };
 
 var calculate_all = function () {
-    all_steps_and_jumps = [];
-    all_steps_and_jumps_counter = 0;
+    storage.all_steps_and_jumps = [];
+    storage.all_steps_and_jumps_counter = 0;
     let up_or_down = "up";
-    for (let k = 1; k <= settings.sections; k++) {
+    for (let k = 1; k <= storage.sections; k++) {
         figures_and_burpees(k, up_or_down);
     }
     up_or_down = "down";
-    for (let k = settings.sections - 1; k > 0; k--) {
+    for (let k = storage.sections - 1; k > 0; k--) {
         figures_and_burpees(k, up_or_down);
     }
-    all_steps_and_jumps_number = all_steps_and_jumps_counter;
+    storage.all_steps_and_jumps_number = storage.all_steps_and_jumps_counter;
 };
 
 var check_for_next = function() {
     let timestamp =   new Date().getTime();
-    if (all_steps_and_jumps_counter === 0) {
+    if (storage.all_steps_and_jumps_counter === 0) {
         // first step, execute immediately
-        console.log(all_steps_and_jumps[all_steps_and_jumps_counter]);
+        console.log(storage.all_steps_and_jumps[storage.all_steps_and_jumps_counter]);
         timer.timestamp_last = timestamp;
-        update_timer_DOM(all_steps_and_jumps_counter);
-        all_steps_and_jumps_counter++;
+        update_timer_DOM(storage.all_steps_and_jumps_counter);
+        storage.all_steps_and_jumps_counter++;
     }else {
-        if (timestamp > all_steps_and_jumps[all_steps_and_jumps_counter - 1].delay + timer.timestamp_last) {
-            console.log(all_steps_and_jumps[all_steps_and_jumps_counter]);
+        if (timestamp > storage.all_steps_and_jumps[storage.all_steps_and_jumps_counter - 1].delay + timer.timestamp_last) {
+            console.log(storage.all_steps_and_jumps[storage.all_steps_and_jumps_counter]);
             timer.timestamp_last = timestamp;
-            update_timer_DOM(all_steps_and_jumps_counter);
-            all_steps_and_jumps_counter++;
+            update_timer_DOM(storage.all_steps_and_jumps_counter);
+            storage.all_steps_and_jumps_counter++;
         }
     }
 
 
-  if (all_steps_and_jumps_counter === all_steps_and_jumps_number - 1) {
+  if (storage.all_steps_and_jumps_counter === storage.all_steps_and_jumps_number - 1) {
       clearInterval(interval);
   }
 };
 
 var do_all = function () {
     calculate_all();
-    all_steps_and_jumps_counter = 0;
+    storage.all_steps_and_jumps_counter = 0;
     interval = setInterval(check_for_next, 100);
 };
 
@@ -140,7 +141,7 @@ var abort_all = function () {
 };
 
 let update_timer_DOM = function (current) {
-    let data = all_steps_and_jumps[current];
+    let data = storage.all_steps_and_jumps[current];
     if (data.step_or_burpee === "step") {
         let main = document.getElementById("step_burpee");
         main.textContent = data.figure + "-" + data.step;
