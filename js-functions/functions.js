@@ -18,25 +18,26 @@ var timer = {
 };
 
 var storage = {
-    sections: 2,
+    sections: 11,
     figure_steps: 6,
 
     // the "delay after" includes also the time for the action (jumping, walking)
     // all in ms
     // after every step
-    delay_step: 300,
+    delay_step: 500,
     // extra time after all steps, before the jumps
     delay_walk_pattern: 1000,
     // after every jump
-    delay_jump: 1000,
+    delay_jump: 1500,
     // extra time after the jumps, before the next walking pattern
-    delay_jumps: 1000,
+    delay_jumps: 1500,
 
     // intern data
     all_steps_and_jumps: [],
     all_steps_and_jumps_counter: 1,
     all_steps_and_jumps_number: 0,
-    running: false
+    running: false,
+    wait_after_burpees: false,
 };
 
 var interval; // for function
@@ -120,6 +121,14 @@ var check_for_next = function() {
     }else {
         if (timestamp > storage.all_steps_and_jumps[storage.all_steps_and_jumps_counter - 1].delay + timer.timestamp_last) {
             console.log(storage.all_steps_and_jumps[storage.all_steps_and_jumps_counter]);
+
+            // check for pause/waiting to resume
+            if ((storage.all_steps_and_jumps[storage.all_steps_and_jumps_counter + 1].step_or_burpee === "step") &&
+                (storage.all_steps_and_jumps[storage.all_steps_and_jumps_counter ].step_or_burpee === "burpee")) {
+                // maybe index out of range but don't care
+                if (storage.wait_after_burpees) storage.running = false;
+            }
+
             timer.timestamp_last = timestamp;
             update_timer_DOM(storage.all_steps_and_jumps_counter);
             storage.all_steps_and_jumps_counter++;
@@ -143,6 +152,7 @@ var do_all = function () {
 var abort_all = function () {
     storage.running = false;
     clearInterval(interval);
+    storage.all_steps_and_jumps_counter = 0; // maybe some unwanted effects...
 };
 
 let update_timer_DOM = function (current) {
